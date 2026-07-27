@@ -1,0 +1,77 @@
+{
+  "employees": [
+    {
+      "id": "1",
+      "name": "Asha Patel",
+      "email": "asha.patel@company.com",
+      "department": "Engineering",
+      "designation": "Senior Frontend Engineer",
+      "status": "Active",
+      "joiningDate": "2022-03-18"
+    },
+    {
+      "name": "Liam Chen",
+      "email": "liam.chen@company.com",
+      "department": "HR",
+      "designation": "HR Manager",
+      "status": "Inactive",
+      "joiningDate": "2020-08-12",
+      "id": "2"
+    },
+    {
+      "id": "3",
+      "name": "Nina Gomez",
+      "email": "nina.gomez@company.com",
+      "department": "Sales",
+      "designation": "Account Executive",
+      "status": "Active",
+      "joiningDate": "2023-01-09"
+    },
+    {
+      "id": "4",
+      "name": "Owen Brooks",
+      "email": "owen.brooks@company.com",
+      "department": "Finance",
+      "designation": "Finance Analyst",
+      "status": "Active",
+      "joiningDate": "2021-11-22"
+    },
+    {
+      "id": "5",
+      "name": "Priya Shah",
+      "email": "priya.shah@company.com",
+      "department": "Marketing",
+      "designation": "Marketing Lead",
+      "status": "Active",
+      "joiningDate": "2024-02-14"
+    },
+    {
+      "id": "6",
+      "name": "Daniel Kim",
+      "email": "daniel.kim@company.com",
+      "department": "Support",
+      "designation": "Support Specialist",
+      "status": "Inactive",
+      "joiningDate": "2022-07-05"
+    },
+    {
+      "id": "7",
+      "name": "Maya Singh",
+      "email": "maya.singh@company.com",
+      "department": "Operations",
+      "designation": "Operations Manager",
+      "status": "Active",
+      "joiningDate": "2023-09-17"
+    },
+    {
+      "id": "8",
+      "name": "Ethan Cole",
+      "email": "ethan.cole@company.com",
+      "department": "IT",
+      "designation": "Systems Administrator",
+      "status": "Active",
+      "joiningDate": "2021-05-30"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

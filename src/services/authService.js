@@ -17,7 +17,7 @@ export const authService = {
 
     const user = {
       id: 1,
-      name: 'Ava Johnson',
+      name: 'Admin User',
       email: normalizedEmail,
       role: 'HR Admin',
     };
