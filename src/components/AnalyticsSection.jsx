@@ -26,8 +26,8 @@ export default function AnalyticsSection({ employees }) {
   });
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="grid gap-3 sm:gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         <div className="mb-4 flex items-center gap-2">
           <BarChart3 size={18} className="text-slate-700" />
           <h3 className="text-lg font-semibold text-slate-900">Department-wise Employees</h3>
@@ -45,7 +45,7 @@ export default function AnalyticsSection({ employees }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         <div className="mb-4 flex items-center gap-2">
           <PieChart size={18} className="text-slate-700" />
           <h3 className="text-lg font-semibold text-slate-900">Status Distribution</h3>
@@ -63,7 +63,7 @@ export default function AnalyticsSection({ employees }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 xl:col-span-2">
         <div className="mb-4 flex items-center gap-2">
           <TrendingUp size={18} className="text-slate-700" />
           <h3 className="text-lg font-semibold text-slate-900">Monthly Joined Employees</h3>

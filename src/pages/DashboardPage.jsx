@@ -131,10 +131,10 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <section id="dashboard" className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="space-y-3 sm:space-y-6">
+      <section id="dashboard" className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ title, value, description, icon: Icon, tone }) => (
-          <div key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div key={title} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5">
             <div className={`inline-flex rounded-xl p-2 ${tone}`}>
               <Icon size={18} />
             </div>
@@ -145,24 +145,24 @@ export default function DashboardPage() {
         ))}
       </section>
 
-      <section id="analytics">
+      <section id="analytics" className="overflow-hidden">
         <AnalyticsSection employees={employees} />
       </section>
 
-      <section id="employee-list" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <section id="employee-list" className="rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-900">Employee Directory</h3>
             <p className="text-sm text-slate-500">Search, filter, and manage records with confidence.</p>
           </div>
-          <button type="button" onClick={openCreateModal} className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+          <button type="button" onClick={openCreateModal} className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 md:w-auto">
             <Plus size={16} />
             Add Employee
           </button>
         </div>
 
-        <div className="mt-6 flex flex-col gap-4 lg:flex-row">
-          <label className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+        <div className="mt-3 grid gap-2.5 sm:mt-6 sm:grid-cols-2 xl:grid-cols-5">
+          <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600 sm:col-span-2 xl:col-span-2">
             <Search size={16} />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name or email" className="w-full border-none bg-transparent outline-none" />
           </label>
@@ -177,27 +177,27 @@ export default function DashboardPage() {
               <option key={item} value={item}>{item}</option>
             ))}
           </select>
-          <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-600 outline-none">
+          <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-600 outline-none sm:col-span-2 xl:col-span-1">
             <option value="recent">Newest Added</option>
             <option value="joiningDateAsc">Joining Date: Oldest</option>
             <option value="joiningDateDesc">Joining Date: Newest</option>
             <option value="nameAsc">Name: A-Z</option>
             <option value="nameDesc">Name: Z-A</option>
           </select>
-          <button type="button" onClick={resetFilters} className="cursor-pointer rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50">
+          <button type="button" onClick={resetFilters} className="cursor-pointer rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 sm:col-span-2 xl:col-span-1">
             Reset Filters
           </button>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4 sm:mt-6">
           {isLoading ? <Loader /> : error ? <ErrorState message={error} onRetry={loadEmployees} /> : filteredEmployees.length === 0 ? <EmptyState /> : (
             <>
               <EmployeeTable employees={paginatedEmployees.items} onEdit={openEditModal} onDelete={openDeleteModal} />
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <p className="text-sm text-slate-500">
                   Showing {paginatedEmployees.items.length} of {sortedEmployees.length} employees
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} className="cursor-pointer rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 disabled:cursor-not-allowed disabled:opacity-50">Previous</button>
                   {Array.from({ length: paginatedEmployees.totalPages }, (_, index) => index + 1).map((pageNumber) => (
                     <button key={pageNumber} type="button" onClick={() => setPage(pageNumber)} className={`h-9 w-9 cursor-pointer rounded-lg border text-sm font-semibold ${page === pageNumber ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 text-slate-600'}`}>

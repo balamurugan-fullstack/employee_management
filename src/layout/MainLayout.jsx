@@ -70,15 +70,17 @@ export default function MainLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col lg:flex-row">
-        <aside className={`w-full border-b border-slate-200 bg-white px-5 py-5 lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-b-0 lg:border-r ${mobileMenuOpen ? 'block' : 'hidden'} lg:block`}>
-          <div className="flex items-center justify-between lg:block">
+      {mobileMenuOpen ? <button type="button" className="fixed inset-0 z-30 bg-slate-900/40 md:hidden" aria-label="Close navigation menu" onClick={() => setMobileMenuOpen(false)} /> : null}
+
+      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col overflow-x-hidden md:flex-row">
+        <aside className={`fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] border-r border-slate-200 bg-white px-5 py-5 shadow-xl transition-transform duration-200 md:sticky md:top-0 md:h-screen md:w-72 md:translate-x-0 md:shadow-none ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="flex items-center justify-between md:block">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">HRMS</p>
               <h1 className="mt-2 text-xl font-semibold text-slate-900">Employee Hub</h1>
             </div>
-            <button className="cursor-pointer rounded-lg border border-slate-200 p-2 text-slate-600 lg:hidden" type="button" aria-label="Toggle menu" onClick={() => setMobileMenuOpen((open) => !open)}>
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            <button className="cursor-pointer rounded-lg border border-slate-200 p-2 text-slate-600 md:hidden" type="button" aria-label="Toggle menu" onClick={() => setMobileMenuOpen((open) => !open)}>
+              <X size={18} />
             </button>
           </div>
 
@@ -102,6 +104,14 @@ export default function MainLayout() {
                 </button>
               );
             })}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-3 py-3 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
           </nav>
 
           <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -110,9 +120,12 @@ export default function MainLayout() {
           </div>
         </aside>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <header className="sticky top-0 z-20 mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-4 shadow-sm backdrop-blur sm:px-6">
+        <main className="flex-1 p-2 sm:p-3 md:p-6 lg:p-8">
+          <header className="sticky top-0 z-20 mb-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-3 py-3 shadow-sm backdrop-blur sm:px-4 md:mb-6 md:px-6">
             <div className="flex items-center gap-3">
+              <button className="cursor-pointer rounded-xl border border-slate-200 p-2 text-slate-600 md:hidden" type="button" aria-label="Open navigation menu" onClick={() => setMobileMenuOpen(true)}>
+                <Menu size={18} />
+              </button>
               <div className="rounded-2xl bg-blue-600 p-2.5 text-white">
                 <LayoutDashboard size={18} />
               </div>
@@ -124,7 +137,7 @@ export default function MainLayout() {
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              className="hidden cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 md:inline-flex"
             >
               <LogOut size={16} />
               Logout
