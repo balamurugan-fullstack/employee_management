@@ -7,7 +7,7 @@
       "department": "Engineering",
       "designation": "Senior Frontend Engineer",
       "status": "Active",
-      "joiningDate": "2022-03-18"
+      "joiningDate": "2026-03-18"
     },
     {
       "name": "Liam Chen",
@@ -15,17 +15,17 @@
       "department": "HR",
       "designation": "HR Manager",
       "status": "Inactive",
-      "joiningDate": "2020-08-12",
+      "joiningDate": "2025-08-12",
       "id": "2"
     },
     {
-      "id": "3",
-      "name": "Nina Gomez",
+      "name": "Balamurugan.N",
       "email": "nina.gomez@company.com",
       "department": "Sales",
       "designation": "Account Executive",
       "status": "Active",
-      "joiningDate": "2023-01-09"
+      "joiningDate": "2026-01-09",
+      "id": "3"
     },
     {
       "id": "4",
@@ -34,7 +34,7 @@
       "department": "Finance",
       "designation": "Finance Analyst",
       "status": "Active",
-      "joiningDate": "2021-11-22"
+      "joiningDate": "2025-11-22"
     },
     {
       "id": "5",
@@ -71,6 +71,16 @@
       "designation": "Systems Administrator",
       "status": "Active",
       "joiningDate": "2021-05-30"
+    },
+    {
+      "name": "Balamurugan N",
+      "email": "balamurugan.dev2023@gmail.com",
+      "department": "Engineering",
+      "designation": "Software Engineer",
+      "status": "Active",
+      "joiningDate": "2026-07-23",
+      "createdAt": "2026-07-27T15:11:46.821Z",
+      "id": "UBfj6fQigSU"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

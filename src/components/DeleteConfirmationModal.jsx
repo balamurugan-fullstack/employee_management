@@ -17,12 +17,12 @@ export default function DeleteConfirmationModal({ employee, isOpen, onClose, onC
         </div>
 
         <p className="mt-6 text-sm text-slate-600">
-          This will remove <span className="font-semibold text-slate-900">{employee.name}</span> from the employee directory and any related records in this demo workspace.
+          This will remove <span className="font-semibold text-slate-900">{employee.name}</span> from the employee directory and any related records in this employee workspace.
         </p>
 
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
-          <button type="button" onClick={() => onConfirm(employee.id)} className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700">Delete</button>
+          <button type="button" onClick={onClose} className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+          <button type="button" onClick={() => onConfirm(employee.id)} className="cursor-pointer rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700">Delete</button>
         </div>
       </div>
     </div>

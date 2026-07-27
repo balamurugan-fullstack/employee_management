@@ -11,6 +11,40 @@ export const formatDate = (value) => {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
 };
 
+export const sortEmployees = ({ employees, sortBy = 'recent' }) => {
+  const sortedEmployees = [...employees];
+
+  switch (sortBy) {
+    case 'joiningDateAsc':
+      sortedEmployees.sort((left, right) => new Date(left.joiningDate) - new Date(right.joiningDate));
+      break;
+    case 'joiningDateDesc':
+      sortedEmployees.sort((left, right) => new Date(right.joiningDate) - new Date(left.joiningDate));
+      break;
+    case 'nameAsc':
+      sortedEmployees.sort((left, right) => left.name.localeCompare(right.name));
+      break;
+    case 'nameDesc':
+      sortedEmployees.sort((left, right) => right.name.localeCompare(left.name));
+      break;
+    case 'recent':
+    default:
+      sortedEmployees.sort((left, right) => {
+        const leftTimestamp = left.createdAt ? new Date(left.createdAt).getTime() : 0;
+        const rightTimestamp = right.createdAt ? new Date(right.createdAt).getTime() : 0;
+
+        if (leftTimestamp !== rightTimestamp) {
+          return rightTimestamp - leftTimestamp;
+        }
+
+        return Number(right.id) - Number(left.id);
+      });
+      break;
+  }
+
+  return sortedEmployees;
+};
+
 export const filterEmployees = ({ employees, query, department, status }) => {
   const normalizedQuery = query.trim().toLowerCase();
 

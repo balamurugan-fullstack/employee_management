@@ -2,7 +2,7 @@ import { BarChart3, PieChart, TrendingUp } from 'lucide-react';
 import { BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { EMPLOYEE_DEPARTMENTS } from '../utils/employeeUtils';
 
-const COLORS = ['#0f172a', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0', '#f8fafc', '#f1f5f9'];
+const chartColors = ['#2563EB', '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#0F172A', '#64748B', '#93C5FD'];
 
 export default function AnalyticsSection({ employees }) {
   const departmentData = EMPLOYEE_DEPARTMENTS.map((department) => ({
@@ -39,7 +39,7 @@ export default function AnalyticsSection({ employees }) {
               <XAxis dataKey="name" tickLine={false} axisLine={false} />
               <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
               <Tooltip />
-              <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="#0f172a" />
+              <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="#2563EB" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -54,8 +54,8 @@ export default function AnalyticsSection({ employees }) {
           <ResponsiveContainer width="100%" height="100%">
             <RechartsPieChart>
               <Pie data={statusData} dataKey="value" nameKey="name" innerRadius={70} outerRadius={100} paddingAngle={3}>
-                <Cell fill="#0f172a" />
-                <Cell fill="#64748b" />
+                <Cell fill="#2563EB" />
+                <Cell fill="#10B981" />
               </Pie>
               <Tooltip />
             </RechartsPieChart>
@@ -75,7 +75,7 @@ export default function AnalyticsSection({ employees }) {
               <XAxis dataKey="month" tickLine={false} axisLine={false} />
               <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
               <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#0f172a" strokeWidth={3} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="count" stroke="#4F46E5" strokeWidth={3} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

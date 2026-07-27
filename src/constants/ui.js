@@ -1,0 +1,15 @@
+export const appPalette = {
+  background: '#F8FAFC',
+  sidebar: '#1E293B',
+  navbar: '#FFFFFF',
+  card: '#FFFFFF',
+  primary: '#2563EB',
+  secondary: '#4F46E5',
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#EF4444',
+  text: '#0F172A',
+  mutedText: '#64748B',
+  border: '#E2E8F0',
+  hover: '#EFF6FF',
+};

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { X } from 'lucide-react';
 import { EMPLOYEE_DEPARTMENTS } from '../utils/employeeUtils';
 
@@ -11,7 +12,7 @@ const initialForm = {
   joiningDate: '',
 };
 
-export default function EmployeeFormModal({ employee, isOpen, onClose, onSubmit }) {
+export default function EmployeeFormModal({ employee, isOpen, onClose, onSubmit, existingEmails = [] }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
 
@@ -40,8 +41,13 @@ export default function EmployeeFormModal({ employee, isOpen, onClose, onSubmit 
       nextErrors.name = 'Employee name is required.';
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+    const normalizedEmail = form.email.trim().toLowerCase();
+    const isDuplicateEmail = existingEmails.some((email) => email === normalizedEmail && email !== (employee?.email?.trim().toLowerCase() ?? ''));
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       nextErrors.email = 'Please provide a valid email address.';
+    } else if (isDuplicateEmail) {
+      nextErrors.email = 'Another employee already uses this email address.';
     }
 
     if (!form.designation.trim()) {
@@ -60,6 +66,7 @@ export default function EmployeeFormModal({ employee, isOpen, onClose, onSubmit 
     event.preventDefault();
 
     if (!validate()) {
+      toast.error('Please correct the highlighted validation errors.');
       return;
     }
 
@@ -79,7 +86,7 @@ export default function EmployeeFormModal({ employee, isOpen, onClose, onSubmit 
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Employee</p>
             <h3 className="text-xl font-semibold text-slate-900">{employee ? 'Edit Employee' : 'Add Employee'}</h3>
           </div>
-          <button type="button" onClick={onClose} className="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100">
+          <button type="button" onClick={onClose} className="cursor-pointer rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100">
             <X size={18} />
           </button>
         </div>
@@ -122,8 +129,8 @@ export default function EmployeeFormModal({ employee, isOpen, onClose, onSubmit 
           </div>
 
           <div className="md:col-span-2 mt-2 flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
-            <button type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Save Employee</button>
+            <button type="button" onClick={onClose} className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+            <button type="submit" className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">Save Employee</button>
           </div>
         </form>
       </div>

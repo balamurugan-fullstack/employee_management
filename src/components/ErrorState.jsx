@@ -7,7 +7,7 @@ export default function ErrorState({ message, onRetry }) {
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700"
+          className="mt-4 cursor-pointer rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700"
         >
           Retry
         </button>
