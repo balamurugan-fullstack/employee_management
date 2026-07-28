@@ -42,4 +42,11 @@ describe('employeeUtils', () => {
     expect(result.items).toHaveLength(1);
     expect(result.totalPages).toBe(2);
   });
+
+  it('returns all employees when page size is all', () => {
+    const result = paginateEmployees({ employees, page: 1, pageSize: 'All' });
+
+    expect(result.items).toHaveLength(employees.length);
+    expect(result.totalPages).toBe(1);
+  });
 });

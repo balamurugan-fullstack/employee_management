@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { Edit3, Trash2 } from 'lucide-react';
 import { formatDate } from '../utils/employeeUtils';
 
-export default function EmployeeTable({ employees, onEdit, onDelete }) {
+function EmployeeTable({ employees, onEdit, onDelete }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="hidden max-h-[480px] overflow-x-auto md:block">
@@ -109,3 +110,5 @@ export default function EmployeeTable({ employees, onEdit, onDelete }) {
     </div>
   );
 }
+
+export default memo(EmployeeTable);

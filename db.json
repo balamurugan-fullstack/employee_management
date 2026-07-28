@@ -28,49 +28,31 @@
       "id": "3"
     },
     {
-      "id": "4",
       "name": "Owen Brooks",
       "email": "owen.brooks@company.com",
       "department": "Finance",
       "designation": "Finance Analyst",
       "status": "Active",
-      "joiningDate": "2025-11-22"
+      "joiningDate": "2025-11-22",
+      "id": "4"
     },
     {
-      "id": "5",
       "name": "Priya Shah",
       "email": "priya.shah@company.com",
       "department": "Marketing",
       "designation": "Marketing Lead",
       "status": "Active",
-      "joiningDate": "2024-02-14"
+      "joiningDate": "2024-02-14",
+      "id": "5"
     },
     {
-      "id": "6",
       "name": "Daniel Kim",
       "email": "daniel.kim@company.com",
       "department": "Support",
       "designation": "Support Specialist",
       "status": "Inactive",
-      "joiningDate": "2022-07-05"
-    },
-    {
-      "id": "7",
-      "name": "Maya Singh",
-      "email": "maya.singh@company.com",
-      "department": "Operations",
-      "designation": "Operations Manager",
-      "status": "Active",
-      "joiningDate": "2023-09-17"
-    },
-    {
-      "id": "8",
-      "name": "Ethan Cole",
-      "email": "ethan.cole@company.com",
-      "department": "IT",
-      "designation": "Systems Administrator",
-      "status": "Active",
-      "joiningDate": "2021-05-30"
+      "joiningDate": "2022-07-05",
+      "id": "6"
     },
     {
       "name": "Balamurugan N",
@@ -79,8 +61,88 @@
       "designation": "Software Engineer",
       "status": "Active",
       "joiningDate": "2026-07-23",
-      "createdAt": "2026-07-27T15:11:46.821Z",
       "id": "UBfj6fQigSU"
+    },
+    {
+      "name": "test",
+      "email": "test@gmail.com",
+      "department": "Engineering",
+      "designation": "test",
+      "status": "Active",
+      "joiningDate": "4444-04-04",
+      "id": "5OmpnX0pxEs"
+    },
+    {
+      "name": "Balamurugan.N",
+      "email": "balalearn9831@gmail.com",
+      "department": "Engineering",
+      "designation": "Operations Manager",
+      "status": "Active",
+      "joiningDate": "2026-07-07",
+      "id": "eSikPVmt3DE"
+    },
+    {
+      "name": "Toast Test",
+      "email": "toast.test.1785216542204@example.com",
+      "department": "Engineering",
+      "designation": "Tester",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "XCNcJ01mkM8"
+    },
+    {
+      "name": "Debug Test",
+      "email": "debug.test.1785216681346@example.com",
+      "department": "Engineering",
+      "designation": "Debugger",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "gpKGu2GOvXo"
+    },
+    {
+      "name": "Unload Test",
+      "email": "unload.test.1785216751642@example.com",
+      "department": "Engineering",
+      "designation": "UnloadTester",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "XKAGw6lP_p0"
+    },
+    {
+      "name": "Prevent Test",
+      "email": "prevent.test.1785216805766@example.com",
+      "department": "Engineering",
+      "designation": "Preventer0",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "TnLfExZavYE"
+    },
+    {
+      "name": "LastAction Test",
+      "email": "lastaction.test.1785216834667@example.com",
+      "department": "Engineering",
+      "designation": "LA",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "fsIQapQYFJQ"
+    },
+    {
+      "name": "Helper Test",
+      "email": "helper.test.1785216910337@example.com",
+      "department": "Engineering",
+      "designation": "Helper",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "xcrOKr6TT7A"
+    },
+    {
+      "name": "IndexLevel Test",
+      "email": "indexlevel.test.1785217081260@example.com",
+      "department": "Engineering",
+      "designation": "IndexLevel",
+      "status": "Active",
+      "joiningDate": "2026-07-28",
+      "id": "xY8xVfgMHQo"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -62,11 +62,20 @@ export const filterEmployees = ({ employees, query, department, status }) => {
 };
 
 export const paginateEmployees = ({ employees, page, pageSize }) => {
-  const startIndex = (page - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  if (pageSize === 'All' || pageSize === 'all' || pageSize === null || pageSize === undefined || pageSize === '') {
+    return {
+      items: employees,
+      totalPages: 1,
+    };
+  }
+
+  const normalizedPageSize = Number(pageSize);
+  const safePageSize = Number.isFinite(normalizedPageSize) && normalizedPageSize > 0 ? normalizedPageSize : employees.length;
+  const startIndex = (page - 1) * safePageSize;
+  const endIndex = startIndex + safePageSize;
 
   return {
     items: employees.slice(startIndex, endIndex),
-    totalPages: Math.max(1, Math.ceil(employees.length / pageSize)),
+    totalPages: Math.max(1, Math.ceil(employees.length / safePageSize)),
   };
 };

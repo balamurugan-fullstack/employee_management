@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, BarChart3, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -15,14 +15,32 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
+  const contentRef = useRef(null);
+
+  const handleLogout = useCallback(() => {
+    logout();
+    toast.success('You have been logged out.');
+    navigate('/login');
+  }, [logout, navigate]);
+
+  const scrollToSection = useCallback((targetId) => {
+    const container = contentRef.current;
+    const target = document.getElementById(targetId);
+
+    if (target && container) {
+      const offsetTop = target.offsetTop - 96;
+      container.scrollTo({ top: Math.max(0, offsetTop), behavior: 'smooth' });
+      setActiveSection(targetId);
+      setMobileMenuOpen(false);
+    }
+  }, []);
 
   useEffect(() => {
+    const container = contentRef.current;
     const sectionIds = navItems.map((item) => item.targetId);
-    const sectionElements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
+    const sectionElements = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
 
-    if (!sectionElements.length) {
+    if (!container || !sectionElements.length) {
       return undefined;
     }
 
@@ -36,7 +54,7 @@ export default function MainLayout() {
           setActiveSection(visibleEntry.target.id);
         }
       },
-      { threshold: [0.3, 0.6], rootMargin: '-20% 0px -40% 0px' },
+      { root: container, threshold: [0.3, 0.6], rootMargin: '-20% 0px -40% 0px' },
     );
 
     sectionElements.forEach((section) => observer.observe(section));
@@ -44,36 +62,36 @@ export default function MainLayout() {
     return () => observer.disconnect();
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    toast.success('You have been logged out.');
-    navigate('/login');
-  };
+  const sidebarLinks = useMemo(
+    () =>
+      navItems.map(({ label, targetId, icon: Icon }) => {
+        const isActive = activeSection === targetId;
 
-  const scrollToSection = (targetId) => {
-    const target = document.getElementById(targetId);
-
-    if (target) {
-      const topOffset = 90;
-      const elementPosition = target.getBoundingClientRect().top + window.scrollY;
-      const offsetPosition = elementPosition - topOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-
-      setActiveSection(targetId);
-      setMobileMenuOpen(false);
-    }
-  };
+        return (
+          <button
+            key={targetId}
+            type="button"
+            onClick={() => scrollToSection(targetId)}
+            className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-medium transition-all duration-200 ${
+              isActive
+                ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm'
+                : 'border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Icon size={18} />
+            {label}
+          </button>
+        );
+      }),
+    [activeSection, scrollToSection],
+  );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
+    <div className="h-screen overflow-hidden bg-slate-50 text-slate-800">
       {mobileMenuOpen ? <button type="button" className="fixed inset-0 z-30 bg-slate-900/40 md:hidden" aria-label="Close navigation menu" onClick={() => setMobileMenuOpen(false)} /> : null}
 
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col overflow-x-hidden md:flex-row">
-        <aside className={`fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] border-r border-slate-200 bg-white px-5 py-5 shadow-xl transition-transform duration-200 md:sticky md:top-0 md:h-screen md:w-72 md:translate-x-0 md:shadow-none ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className="flex h-screen w-full overflow-hidden">
+        <aside className={`fixed left-0 top-0 z-40 flex h-screen w-72 max-w-[85vw] shrink-0 flex-col border-r border-slate-200 bg-white px-5 py-5 shadow-xl transition-transform duration-200 md:static md:translate-x-0 md:shadow-none ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="flex items-center justify-between md:block">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">HRMS</p>
@@ -85,29 +103,11 @@ export default function MainLayout() {
           </div>
 
           <nav className="mt-8 space-y-2">
-            {navItems.map(({ label, targetId, icon: Icon }) => {
-              const isActive = activeSection === targetId;
-
-              return (
-                <button
-                  key={targetId}
-                  type="button"
-                  onClick={() => scrollToSection(targetId)}
-                  className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-medium transition ${
-                    isActive
-                      ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm'
-                      : 'border-transparent text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  <Icon size={18} />
-                  {label}
-                </button>
-              );
-            })}
+            {sidebarLinks}
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-3 py-3 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+              className="flex w-full items-center gap-3 rounded-xl border border-slate-200 px-3 py-3 text-left text-sm font-medium text-slate-600 transition-all duration-200 hover:border-slate-200 hover:bg-slate-100 hover:text-slate-900"
             >
               <LogOut size={18} />
               Logout
@@ -120,8 +120,8 @@ export default function MainLayout() {
           </div>
         </aside>
 
-        <main className="flex-1 p-2 sm:p-3 md:p-6 lg:p-8">
-          <header className="sticky top-0 z-20 mb-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-3 py-3 shadow-sm backdrop-blur sm:px-4 md:mb-6 md:px-6">
+        <main className="flex min-h-screen flex-1 flex-col overflow-hidden">
+          <header className="sticky top-0 z-20 flex flex-shrink-0 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-3 py-3 shadow-sm backdrop-blur sm:px-4 md:px-6">
             <div className="flex items-center gap-3">
               <button className="cursor-pointer rounded-xl border border-slate-200 p-2 text-slate-600 md:hidden" type="button" aria-label="Open navigation menu" onClick={() => setMobileMenuOpen(true)}>
                 <Menu size={18} />
@@ -144,7 +144,9 @@ export default function MainLayout() {
             </button>
           </header>
 
-          <Outlet />
+          <div ref={contentRef} className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 md:p-6 lg:p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

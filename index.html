@@ -7,6 +7,24 @@
     <title>employee_management</title>
   </head>
   <body>
+    <script>
+      // Prevent native form submissions at the earliest possible moment
+      (function() {
+        try {
+          document.addEventListener('submit', function (e) {
+            try { e.preventDefault(); } catch (err) {}
+          }, true);
+
+          // Prevent accidental beforeunload triggers during CRUD operations
+          window.addEventListener('beforeunload', function (e) {
+            // noop - avoid unexpected unload prompts from third-party code
+            console.warn('index: beforeunload suppressed');
+          });
+        } catch (err) {
+          // ignore
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

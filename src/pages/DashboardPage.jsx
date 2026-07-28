@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Activity, Briefcase, Building2, Plus, Search, Users, UserX } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Activity, Building2, Plus, Search, Users, UserX } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { showSuccess, showError } from '../utils/toastHelper';
 import EmployeeTable from '../components/EmployeeTable';
 import EmployeeFormModal from '../components/EmployeeFormModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
@@ -21,13 +22,14 @@ export default function DashboardPage() {
   const [status, setStatus] = useState('All');
   const [sortBy, setSortBy] = useState('recent');
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState('10');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const pageSize = 5;
-
-  const loadEmployees = async () => {
+  const loadEmployees = useCallback(async () => {
     try {
       setIsLoading(true);
       setError('');
@@ -38,11 +40,11 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadEmployees();
-  }, []);
+  }, [loadEmployees]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -56,6 +58,10 @@ export default function DashboardPage() {
     setPage(1);
   }, [debouncedQuery, department, status, sortBy]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize]);
+
   const filteredEmployees = useMemo(
     () => filterEmployees({ employees, query: debouncedQuery, department, status }),
     [employees, debouncedQuery, department, status],
@@ -63,75 +69,114 @@ export default function DashboardPage() {
 
   const sortedEmployees = useMemo(() => sortEmployees({ employees: filteredEmployees, sortBy }), [filteredEmployees, sortBy]);
 
-  const paginatedEmployees = useMemo(() => paginateEmployees({ employees: sortedEmployees, page, pageSize }), [sortedEmployees, page]);
+  const effectivePageSize = pageSize === 'All' ? sortedEmployees.length : Number(pageSize);
+  const totalPages = Math.max(1, pageSize === 'All' ? 1 : Math.ceil(sortedEmployees.length / effectivePageSize));
+  const safePage = Math.min(page, totalPages);
+  const paginatedEmployees = useMemo(() => paginateEmployees({ employees: sortedEmployees, page: safePage, pageSize: effectivePageSize }), [sortedEmployees, safePage, effectivePageSize]);
 
   const activeEmployees = employees.filter((employee) => employee.status === 'Active').length;
   const inactiveEmployees = employees.filter((employee) => employee.status === 'Inactive').length;
 
-  const cards = [
-    { title: 'Total Employees', value: employees.length, description: 'All records in the directory', icon: Users, tone: 'bg-blue-50 text-blue-700' },
-    { title: 'Active Employees', value: activeEmployees, description: 'Currently contributing', icon: Activity, tone: 'bg-emerald-50 text-emerald-700' },
-    { title: 'Inactive Employees', value: inactiveEmployees, description: 'Pending review or offboarded', icon: UserX, tone: 'bg-amber-50 text-amber-700' },
-    { title: 'Departments', value: new Set(employees.map((employee) => employee.department)).size, description: 'Distinct business units', icon: Building2, tone: 'bg-indigo-50 text-indigo-700' },
-  ];
+  const cards = useMemo(
+    () => [
+      { title: 'Total Employees', value: employees.length, description: 'All records in the directory', icon: Users, tone: 'bg-blue-50 text-blue-700' },
+      { title: 'Active Employees', value: activeEmployees, description: 'Currently contributing', icon: Activity, tone: 'bg-emerald-50 text-emerald-700' },
+      { title: 'Inactive Employees', value: inactiveEmployees, description: 'Pending review or offboarded', icon: UserX, tone: 'bg-amber-50 text-amber-700' },
+      { title: 'Departments', value: new Set(employees.map((employee) => employee.department)).size, description: 'Distinct business units', icon: Building2, tone: 'bg-indigo-50 text-indigo-700' },
+    ],
+    [activeEmployees, employees, inactiveEmployees],
+  );
 
-  const handleCreateOrUpdate = async (payload) => {
-    try {
-      if (selectedEmployee) {
-        const updatedEmployee = await employeeService.update(selectedEmployee.id, payload);
-        setEmployees((current) => current.map((employee) => (employee.id === selectedEmployee.id ? updatedEmployee : employee)));
-        toast.success('Employee updated successfully.');
-      } else {
-        const createdEmployee = await employeeService.create({
-          ...payload,
-          createdAt: new Date().toISOString(),
-        });
-        setEmployees((current) => [createdEmployee, ...current]);
-        toast.success('Employee added successfully.');
+  const existingEmails = useMemo(() => employees.map((employee) => employee.email?.toLowerCase() ?? ''), [employees]);
+
+  const handleCreateOrUpdate = useCallback(
+    async (payload) => {
+      setIsSaving(true);
+
+      try {
+        console.log('DashboardPage: handleCreateOrUpdate called', { selectedEmployeeId: selectedEmployee?.id, payload });
+
+        if (selectedEmployee) {
+          const updatedEmployee = await employeeService.update(selectedEmployee.id, payload);
+          setEmployees((prev) => prev.map((employee) => (employee.id === selectedEmployee.id ? updatedEmployee : employee)));
+          showSuccess('Employee updated successfully');
+        } else {
+          const createdEmployee = await employeeService.create({
+            ...payload,
+            createdAt: new Date().toISOString(),
+          });
+          setEmployees((prev) => [...prev, createdEmployee]);
+          showSuccess('Employee added successfully');
+        }
+        setIsModalOpen(false);
+        setSelectedEmployee(null);
+      } catch (err) {
+        const message = err?.message || 'Something went wrong';
+        console.error('DashboardPage: handleCreateOrUpdate error', err);
+        showError(message);
+      } finally {
+        setIsSaving(false);
       }
-      setIsModalOpen(false);
-      setSelectedEmployee(null);
-    } catch (err) {
-      toast.error(err.message || 'Unable to save employee.');
-    }
-  };
+    },
+    [selectedEmployee],
+  );
 
-  const handleDelete = async (employeeId) => {
-    try {
-      await employeeService.remove(employeeId);
-      setEmployees((current) => current.filter((employee) => employee.id !== employeeId));
-      toast.success('Employee deleted successfully.');
-      setIsDeleteModalOpen(false);
-      setSelectedEmployee(null);
-    } catch (err) {
-      toast.error(err.message || 'Unable to delete employee.');
-    }
-  };
+  const handleDelete = useCallback(
+    async (employeeId) => {
+      setIsDeleting(true);
 
-  const openCreateModal = () => {
+      try {
+        console.log('DashboardPage: handleDelete called', { employeeId });
+        await employeeService.remove(employeeId);
+        setEmployees((prev) => prev.filter((employee) => employee.id !== employeeId));
+        showSuccess('Employee deleted successfully');
+        setIsDeleteModalOpen(false);
+        setSelectedEmployee(null);
+      } catch (err) {
+        const message = err?.message || 'Something went wrong';
+        console.error('DashboardPage: handleDelete error', err);
+        showError(message);
+      } finally {
+        setIsDeleting(false);
+      }
+    },
+    [],
+  );
+
+  const openCreateModal = useCallback(() => {
     setSelectedEmployee(null);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const openEditModal = (employee) => {
+  const openEditModal = useCallback((employee) => {
     setSelectedEmployee(employee);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const openDeleteModal = (employee) => {
+  const openDeleteModal = useCallback((employee) => {
     setSelectedEmployee(employee);
     setIsDeleteModalOpen(true);
-  };
+  }, []);
 
-  const resetFilters = () => {
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedEmployee(null);
+  }, []);
+
+  const closeDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+    setSelectedEmployee(null);
+  }, []);
+
+  const resetFilters = useCallback(() => {
     setQuery('');
     setDepartment('');
     setStatus('All');
     setSortBy('recent');
-  };
+  }, []);
 
   return (
-    <div className="space-y-3 sm:space-y-6">
+    <div className="space-y-3 overflow-x-hidden sm:space-y-6">
       <section id="dashboard" className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ title, value, description, icon: Icon, tone }) => (
           <div key={title} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5">
@@ -193,18 +238,33 @@ export default function DashboardPage() {
           {isLoading ? <Loader /> : error ? <ErrorState message={error} onRetry={loadEmployees} /> : filteredEmployees.length === 0 ? <EmptyState /> : (
             <>
               <EmployeeTable employees={paginatedEmployees.items} onEdit={openEditModal} onDelete={openDeleteModal} />
-              <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <p className="text-sm text-slate-500">
-                  Showing {paginatedEmployees.items.length} of {sortedEmployees.length} employees
-                </p>
+              <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                  <span>
+                    Showing {paginatedEmployees.items.length} of {sortedEmployees.length} employees
+                  </span>
+                  <span className="hidden text-slate-300 md:inline">•</span>
+                  <label className="flex items-center gap-2">
+                    <span className="text-sm text-slate-500">Rows</span>
+                    <select value={pageSize} onChange={(event) => setPageSize(event.target.value)} className="h-9 w-[78px] cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-600 outline-none">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="All">All</option>
+                    </select>
+                  </label>
+                </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} className="cursor-pointer rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 disabled:cursor-not-allowed disabled:opacity-50">Previous</button>
+                  <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={safePage === 1} className="h-9 cursor-pointer rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 disabled:cursor-not-allowed disabled:opacity-50">Previous</button>
                   {Array.from({ length: paginatedEmployees.totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                    <button key={pageNumber} type="button" onClick={() => setPage(pageNumber)} className={`h-9 w-9 cursor-pointer rounded-lg border text-sm font-semibold ${page === pageNumber ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 text-slate-600'}`}>
+                    <button key={pageNumber} type="button" onClick={() => setPage(pageNumber)} className={`h-9 w-9 cursor-pointer rounded-lg border text-sm font-semibold ${safePage === pageNumber ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 text-slate-600'}`}>
                       {pageNumber}
                     </button>
                   ))}
-                  <button type="button" onClick={() => setPage((current) => Math.min(paginatedEmployees.totalPages, current + 1))} disabled={page === paginatedEmployees.totalPages} className="cursor-pointer rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 disabled:cursor-not-allowed disabled:opacity-50">Next</button>
+                  <button type="button" onClick={() => setPage((current) => Math.min(paginatedEmployees.totalPages, current + 1))} disabled={safePage === paginatedEmployees.totalPages} className="h-9 cursor-pointer rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 disabled:cursor-not-allowed disabled:opacity-50">Next</button>
                 </div>
               </div>
             </>
@@ -215,20 +275,16 @@ export default function DashboardPage() {
       <EmployeeFormModal
         isOpen={isModalOpen}
         employee={selectedEmployee}
-        existingEmails={employees.map((employee) => employee.email.toLowerCase())}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedEmployee(null);
-        }}
+        existingEmails={existingEmails}
+        isSubmitting={isSaving}
+        onClose={closeModal}
         onSubmit={handleCreateOrUpdate}
       />
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         employee={selectedEmployee}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedEmployee(null);
-        }}
+        isDeleting={isDeleting}
+        onClose={closeDeleteModal}
         onConfirm={handleDelete}
       />
     </div>
