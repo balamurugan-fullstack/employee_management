@@ -15,6 +15,12 @@ export const authService = {
       throw new Error('Please enter a valid email and password.');
     }
 
+    const isAdminUser = normalizedEmail === 'admin@example.com' && password.trim() === 'password123';
+
+    if (!isAdminUser) {
+      throw new Error('Invalid email or password.');
+    }
+
     const user = {
       id: 1,
       name: 'Admin User',
@@ -22,7 +28,18 @@ export const authService = {
       role: 'HR Admin',
     };
 
-    const token = `fake-jwt-${Date.now()}`;
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const token = [
+      btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })),
+      btoa(JSON.stringify(payload)),
+      'fake-signature',
+    ].join('.');
 
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
